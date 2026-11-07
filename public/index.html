@@ -254,6 +254,7 @@
         const cautare = document.getElementById('cautare');
         const numarCarti = document.getElementById('numar-carti');
 
+
         function creeazaCard(carte) {
             const coloana = document.createElement('div');
             coloana.className = 'col-sm-6 col-lg-4 col-xl-3';
@@ -308,11 +309,31 @@
             gen.appendChild(etichetaGen);
 
             const pagini = document.createElement('p');
-            pagini.className = 'book-pages mt-auto mb-0';
+            pagini.className = 'book-pages mt-auto mb-3';
             pagini.textContent =
                 (carte.pages ?? 'Număr necunoscut') + ' pagini';
 
-            corp.append(titlu, autor, gen, pagini);
+            // F2 - Legatura catre pagina de detalii
+            const butonDetalii = document.createElement('a');
+            butonDetalii.href =
+                '/book.html?id=' + encodeURIComponent(carte.id);
+            butonDetalii.className = 'btn mt-auto';
+            butonDetalii.textContent = 'Vezi detalii';
+
+            butonDetalii.style.backgroundColor = '#58406f';
+            butonDetalii.style.color = '#ffffff';
+            butonDetalii.style.borderRadius = '10px';
+            butonDetalii.style.padding = '10px 16px';
+            butonDetalii.style.fontWeight = '600';
+
+            corp.append(
+                titlu,
+                autor,
+                gen,
+                pagini,
+                butonDetalii
+            );
+
             card.append(coperta, corp);
             coloana.appendChild(card);
 

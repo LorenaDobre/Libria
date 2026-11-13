@@ -79,7 +79,8 @@
             box-shadow: 0 5px 20px rgba(45, 30, 55, 0.04);
         }
 
-        .form-control:focus {
+        .form-control:focus,
+        .form-select:focus {
             border-color: #9875ac;
             box-shadow: 0 0 0 0.2rem rgba(152, 117, 172, 0.15);
         }
@@ -146,18 +147,29 @@
             display: inline-block;
         }
 
-        .book-author {
+        .book-author,
+        .book-pages,
+        .catalog-count {
             color: #756a7c;
         }
 
         .book-pages {
-            color: #756a7c;
             font-size: 0.9rem;
         }
 
-        .catalog-count {
-            color: #756a7c;
+        .btn-cautare {
+            background-color: var(--mov);
+            color: white;
+            border-radius: 10px;
+            padding: 10px 30px;
+            font-weight: 600;
         }
+
+            .btn-cautare:hover,
+            .btn-cautare:focus {
+                background-color: var(--mov-inchis);
+                color: white;
+            }
 
         footer {
             margin-top: 70px;
@@ -205,8 +217,8 @@
 
         <!-- Catalog -->
         <section class="py-5" id="catalog-sectiune">
-            <div class="d-flex flex-wrap justify-content-between
-                        align-items-end gap-3 mb-4">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
                 <div>
                     <h2 class="section-title mb-2">
                         Explorează catalogul
@@ -219,17 +231,59 @@
                 <span id="numar-carti" class="catalog-count"></span>
             </div>
 
-            <!-- Cautare -->
-            <div class="search-box mb-4">
-                <label for="cautare" class="form-label fw-semibold">
-                    Caută o carte
-                </label>
-                <input type="search"
-                       class="form-control form-control-lg"
-                       id="cautare"
-                       placeholder="Introdu titlul sau numele autorului..."
-                       autocomplete="off">
-            </div>
+            <!-- F3 - Formular pentru cautarea si filtrarea cartilor -->
+            <form id="formular-filtre" class="search-box mb-4">
+                <div class="row g-3">
+
+                    <!-- Cautare dupa titlu sau autor -->
+                    <div class="col-12">
+                        <label for="cautare" class="form-label fw-semibold">
+                            Caută o carte
+                        </label>
+
+                        <input type="search"
+                               class="form-control form-control-lg"
+                               id="cautare"
+                               placeholder="Introdu titlul sau numele autorului..."
+                               autocomplete="off">
+                    </div>
+
+                    <!-- Filtrare dupa gen literar -->
+                    <div class="col-md-6">
+                        <label for="filtru-gen" class="form-label fw-semibold">
+                            Gen literar
+                        </label>
+
+                        <select id="filtru-gen" class="form-select">
+                            <option value="">Toate genurile</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtrare dupa numarul maxim de pagini -->
+                    <div class="col-md-6">
+                        <label for="filtru-pagini" class="form-label fw-semibold">
+                            Număr maxim de pagini
+                        </label>
+
+                        <input type="number"
+                               id="filtru-pagini"
+                               class="form-control"
+                               min="1"
+                               step="1"
+                               placeholder="Exemplu: 400">
+                    </div>
+
+                    <!-- Butonul de cautare -->
+                    <div class="col-12 d-flex justify-content-end">
+                        <button type="submit"
+                                id="buton-cautare"
+                                class="btn btn-cautare">
+                            Caută
+                        </button>
+                    </div>
+
+                </div>
+            </form>
 
             <!-- Mesaje -->
             <div id="mesaj" class="alert alert-info" role="status">
@@ -238,6 +292,7 @@
 
             <!-- Cartile din PostgreSQL -->
             <div id="catalog" class="row g-4"></div>
+
         </section>
 
     </main>
@@ -252,9 +307,38 @@
         const catalog = document.getElementById('catalog');
         const mesaj = document.getElementById('mesaj');
         const cautare = document.getElementById('cautare');
+        const filtruGen = document.getElementById('filtru-gen');
+        const filtruPagini = document.getElementById('filtru-pagini');
         const numarCarti = document.getElementById('numar-carti');
+        const formularFiltre = document.getElementById('formular-filtre');
 
+        // F3 - Incarcarea genurilor literare din PostgreSQL
+        async function incarcaGenurile() {
+            try {
+                const raspuns = await fetch('/api/genres');
 
+                if (!raspuns.ok) {
+                    throw new Error('Nu s-au putut incarca genurile.');
+                }
+
+                const genuri = await raspuns.json();
+
+                genuri.forEach(gen => {
+                    const optiune = document.createElement('option');
+                    optiune.value = gen.name;
+                    optiune.textContent = gen.name;
+                    filtruGen.appendChild(optiune);
+                });
+
+            } catch (eroare) {
+                console.error(
+                    'Eroare la incarcarea genurilor:',
+                    eroare
+                );
+            }
+        }
+
+        // F1 - Crearea unui card pentru fiecare carte
         function creeazaCard(carte) {
             const coloana = document.createElement('div');
             coloana.className = 'col-sm-6 col-lg-4 col-xl-3';
@@ -340,6 +424,7 @@
             return coloana;
         }
 
+        // Afisarea cartilor si a mesajelor informative
         function afiseazaCartile(carti) {
             catalog.replaceChildren();
 
@@ -351,7 +436,7 @@
             if (carti.length === 0) {
                 mesaj.className = 'alert alert-light border';
                 mesaj.textContent =
-                    'Nu am găsit cărți care să corespundă căutării.';
+                    'Nu am găsit cărți care să corespundă criteriilor selectate.';
                 return;
             }
 
@@ -366,6 +451,63 @@
             catalog.appendChild(fragment);
         }
 
+        // F3 - Aplicarea simultana a criteriilor de filtrare
+        function aplicaFiltrele() {
+            const termen = cautare.value
+                .toLocaleLowerCase('ro')
+                .trim();
+
+            const genSelectat = filtruGen.value
+                .toLocaleLowerCase('ro');
+
+            const paginiIntroduse = filtruPagini.value.trim();
+
+            const maximPagini = paginiIntroduse === ''
+                ? null
+                : Number(paginiIntroduse);
+
+            const rezultate = toateCartile.filter(carte => {
+
+                // Cautare dupa titlu sau autor
+                const titlu = String(carte.title || '')
+                    .toLocaleLowerCase('ro');
+
+                const autor = String(carte.author || '')
+                    .toLocaleLowerCase('ro');
+
+                const corespundeCautarii =
+                    titlu.includes(termen) ||
+                    autor.includes(termen);
+
+                // Filtrare dupa gen literar
+                // O carte poate apartine mai multor genuri
+                const genuriCarte = String(carte.genres || '')
+                    .split(',')
+                    .map(gen => gen.trim().toLocaleLowerCase('ro'));
+
+                const corespundeGenului =
+                    genSelectat === '' ||
+                    genuriCarte.includes(genSelectat);
+
+                // Filtrare dupa numarul maxim de pagini
+                const corespundePaginilor =
+                    maximPagini === null ||
+                    (
+                        Number.isInteger(maximPagini) &&
+                        maximPagini > 0 &&
+                        carte.pages != null &&
+                        Number(carte.pages) <= maximPagini
+                    );
+
+                return corespundeCautarii &&
+                    corespundeGenului &&
+                    corespundePaginilor;
+            });
+
+            afiseazaCartile(rezultate);
+        }
+
+        // F1 - Incarcarea catalogului din PostgreSQL
         async function incarcaCatalogul() {
             try {
                 const raspuns = await fetch('/api/books');
@@ -376,6 +518,8 @@
 
                 toateCartile = await raspuns.json();
 
+                // La deschiderea paginii afisam toate cartile.
+                // Nu aplicam filtrele pana la apasarea butonului.
                 afiseazaCartile(toateCartile);
 
             } catch (eroare) {
@@ -386,23 +530,21 @@
             }
         }
 
-        cautare.addEventListener('input', () => {
-            const termen = cautare.value
-                .toLocaleLowerCase('ro')
-                .trim();
+        // F3 - Cautarea se executa numai la trimiterea formularului
+        formularFiltre.addEventListener('submit', (eveniment) => {
+            eveniment.preventDefault();
 
-            const rezultate = toateCartile.filter(carte => {
-                const titlu = carte.title.toLocaleLowerCase('ro');
-                const autor = carte.author.toLocaleLowerCase('ro');
+            if (!formularFiltre.reportValidity()) {
+                return;
+            }
 
-                return titlu.includes(termen) ||
-                    autor.includes(termen);
-            });
-
-            afiseazaCartile(rezultate);
+            aplicaFiltrele();
         });
 
+        // Pornirea incarcarii datelor
         incarcaCatalogul();
+        incarcaGenurile();
+
     </script>
 
 </body>

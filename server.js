@@ -3,9 +3,9 @@ require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
-const Book = require('./models/Book');
-const Genre = require('./models/Genre');
-const Theme = require('./models/Theme');
+const Book = require('./Models/Book');
+const Genre = require('./Models/Genre');
+const Theme = require('./Models/Theme');
 
 const db = require('./config/database');
 const {

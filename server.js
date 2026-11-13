@@ -5,6 +5,7 @@ const express = require('express');
 const path = require('path');
 const Book = require('./models/Book');
 const Genre = require('./models/Genre');
+const Theme = require('./models/Theme');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,23 +19,6 @@ app.get('/api/health', (req, res) => {
         status: 'ok',
         aplicatie: 'Libria'
     });
-});
-
-// F3 - Preluarea genurilor literare pentru filtrare
-app.get('/api/genres', async (req, res) => {
-    try {
-        const genres = await Genre.getAll();
-        res.json(genres);
-    } catch (error) {
-        console.error(
-            'Eroare la incarcarea genurilor:',
-            error.message
-        );
-
-        res.status(500).json({
-            error: 'Nu s-au putut incarca genurile literare.'
-        });
-    }
 });
 
 // F1 - Afisarea tuturor cartilor
@@ -86,6 +70,39 @@ app.get('/api/books/:id', async (req, res) => {
     }
 });
 
+// F3 - Preluarea genurilor literare pentru filtrare
+app.get('/api/genres', async (req, res) => {
+    try {
+        const genres = await Genre.getAll();
+        res.json(genres);
+    } catch (error) {
+        console.error(
+            'Eroare la incarcarea genurilor:',
+            error.message
+        );
+
+        res.status(500).json({
+            error: 'Nu s-au putut incarca genurile literare.'
+        });
+    }
+});
+
+// F4 - Preluarea temelor literare pentru chestionar
+app.get('/api/themes', async (req, res) => {
+    try {
+        const themes = await Theme.getAll();
+        res.json(themes);
+    } catch (error) {
+        console.error(
+            'Eroare la incarcarea temelor:',
+            error.message
+        );
+
+        res.status(500).json({
+            error: 'Nu s-au putut incarca temele literare.'
+        });
+    }
+});
 app.listen(PORT, () => {
     console.log(
         `Libria ruleaza la http://localhost:${PORT}`

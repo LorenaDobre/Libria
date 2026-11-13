@@ -22,5 +22,5 @@ jobs:
       - name: Instalare dependinte
         run: npm ci
 
-      - name: Testare algoritm recomandari
-        run: node --test tests/recommendation.test.js
+      - name: Testare filtrare si recomandari
+        run: node --test tests/*.test.js

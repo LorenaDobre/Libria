@@ -315,6 +315,8 @@
         Libria &copy; 2026 · Descoperă cărți potrivite pentru tine
     </footer>
 
+    <script src="/js/bookFilters.js"></script>
+
     <script>
         let toateCartile = [];
 
@@ -466,60 +468,17 @@
         }
 
         // F3 - Aplicarea simultana a criteriilor de filtrare
+
         function aplicaFiltrele() {
-            const termen = cautare.value
-                .toLocaleLowerCase('ro')
-                .trim();
-
-            const genSelectat = filtruGen.value
-                .toLocaleLowerCase('ro');
-
-            const paginiIntroduse = filtruPagini.value.trim();
-
-            const maximPagini = paginiIntroduse === ''
-                ? null
-                : Number(paginiIntroduse);
-
-            const rezultate = toateCartile.filter(carte => {
-
-                // Cautare dupa titlu sau autor
-                const titlu = String(carte.title || '')
-                    .toLocaleLowerCase('ro');
-
-                const autor = String(carte.author || '')
-                    .toLocaleLowerCase('ro');
-
-                const corespundeCautarii =
-                    titlu.includes(termen) ||
-                    autor.includes(termen);
-
-                // Filtrare dupa gen literar
-                // O carte poate apartine mai multor genuri
-                const genuriCarte = String(carte.genres || '')
-                    .split(',')
-                    .map(gen => gen.trim().toLocaleLowerCase('ro'));
-
-                const corespundeGenului =
-                    genSelectat === '' ||
-                    genuriCarte.includes(genSelectat);
-
-                // Filtrare dupa numarul maxim de pagini
-                const corespundePaginilor =
-                    maximPagini === null ||
-                    (
-                        Number.isInteger(maximPagini) &&
-                        maximPagini > 0 &&
-                        carte.pages != null &&
-                        Number(carte.pages) <= maximPagini
-                    );
-
-                return corespundeCautarii &&
-                    corespundeGenului &&
-                    corespundePaginilor;
+            const rezultate = filtreazaCarti(toateCartile, {
+                termen: cautare.value,
+                gen: filtruGen.value,
+                maximPagini: filtruPagini.value
             });
 
             afiseazaCartile(rezultate);
         }
+
 
         // F1 - Incarcarea catalogului din PostgreSQL
         async function incarcaCatalogul() {

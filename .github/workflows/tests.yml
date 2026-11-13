@@ -1,0 +1,26 @@
+
+name: Teste automate Libria
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Preluare cod
+        uses: actions/checkout@v4
+
+      - name: Configurare Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Instalare dependinte
+        run: npm ci
+
+      - name: Testare algoritm recomandari
+        run: node --test tests/recommendation.test.js

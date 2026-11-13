@@ -765,6 +765,11 @@
                 priority: prioritate
             };
 
+            sessionStorage.setItem(
+                'libriaPreferinte',
+                JSON.stringify(preferinte)
+            );
+
             // Disponibile in pagina curenta pentru integrarea F5
             window.libriaPreferences = preferinte;
 
@@ -846,6 +851,14 @@
             );
 
             rezumat.classList.remove('d-none');
+            const butonRecomandari = document.createElement('a');
+
+            butonRecomandari.href = '/recomandari.html';
+            butonRecomandari.className = 'btn btn-libria mt-4';
+            butonRecomandari.textContent = 'Vezi recomandările mele';
+
+            rezumat.appendChild(butonRecomandari);
+
             rezumat.scrollIntoView({
                 behavior: 'smooth',
                 block: 'nearest'

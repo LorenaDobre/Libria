@@ -7,6 +7,12 @@ const Book = require('./models/Book');
 const Genre = require('./models/Genre');
 const Theme = require('./models/Theme');
 
+const db = require('./config/database');
+const {
+    valideazaPreferinte,
+    genereazaRecomandari
+} = require('./services/recommendationService');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -103,6 +109,77 @@ app.get('/api/themes', async (req, res) => {
         });
     }
 });
+
+
+app.post('/api/recommendations', async (req, res) => {
+    const preferinte = req.body;
+
+    if (!valideazaPreferinte(preferinte)) {
+        return res.status(400).json({
+            error: 'Selecteaza cel putin un gen, o tema si lungimea cartilor.'
+        });
+    }
+
+    try {
+        const rezultat = await db.query(`
+            SELECT
+                b.*,
+                COALESCE((
+                    SELECT json_agg(bg.genre_id)
+                    FROM book_genres bg
+                    WHERE bg.book_id = b.id
+                ), '[]'::json) AS genre_ids,
+                COALESCE((
+                    SELECT json_agg(bt.theme_id)
+                    FROM book_themes bt
+                    WHERE bt.book_id = b.id
+                ), '[]'::json) AS theme_ids
+            FROM books b
+            WHERE b.is_active = TRUE
+        `);
+
+        const carti = rezultat.rows.map(carte => ({
+            ...carte,
+            genre_ids: carte.genre_ids.map(Number),
+            theme_ids: carte.theme_ids.map(Number)
+        }));
+
+        // Verificam si daca ID-urile trimise exista in baza de date.
+        const [genuri, teme] = await Promise.all([
+            db.query('SELECT id FROM genres'),
+            db.query('SELECT id FROM themes')
+        ]);
+
+        const idGenuri = new Set(genuri.rows.map(g => Number(g.id)));
+        const idTeme = new Set(teme.rows.map(t => Number(t.id)));
+
+        const valide =
+            preferinte.genres.every(id => idGenuri.has(id)) &&
+            preferinte.themes.every(id => idTeme.has(id));
+
+        if (!valide) {
+            return res.status(400).json({
+                error: 'Genurile sau temele selectate nu sunt valide.'
+            });
+        }
+
+        const recomandari = genereazaRecomandari(
+            carti,
+            preferinte
+        );
+
+        res.json(recomandari);
+
+    } catch (eroare) {
+        console.error('Eroare recomandari:', eroare);
+
+        res.status(500).json({
+            error: 'Nu s-au putut genera recomandarile.'
+        });
+    }
+});
+
+
 app.listen(PORT, () => {
     console.log(
         `Libria ruleaza la http://localhost:${PORT}`

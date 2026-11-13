@@ -7,6 +7,9 @@ BEGIN;
 
 -- 1. Genuri literare
 INSERT INTO genres (name) VALUES
+('Fantasy'),
+('Science Fiction'),
+('Clasic'),
 ('Thriller'),
 ('Istoric'),
 ('Aventura'),
@@ -14,7 +17,9 @@ INSERT INTO genres (name) VALUES
 ('Fictiune contemporana'),
 ('Horror'),
 ('Dezvoltare personala'),
-('Non-fictiune')
+('Non-fictiune'),
+('Romance'),
+('Mister')
 ON CONFLICT (name) DO NOTHING;
 
 -- 2. Teme literare
@@ -28,13 +33,33 @@ INSERT INTO themes (name) VALUES
 ('Magie'),
 ('Societate'),
 ('Cunoastere'),
-('Tradare')
+('Tradare'),
+('Supravietuire'),
+('Prietenie'),
+('Identitate'),
+('Dragoste'),
+('Aventura')
 ON CONFLICT (name) DO NOTHING;
 
 -- 3. Carti
 INSERT INTO books
     (title, author, description, publication_year, pages)
 VALUES
+('Harry Potter si Piatra Filosofala', 'J.K. Rowling',
+ 'Un tanar vrajitor descopera lumea magiei.', 1997, 320),
+
+('Dune', 'Frank Herbert',
+ 'O poveste despre putere si supravietuire pe planeta Arrakis.', 1965, 544),
+
+('Mandrie si prejudecata', 'Jane Austen',
+ 'O poveste despre dragoste, familie si prejudecati sociale.', 1813, 432),
+
+('Crima din Orient Express', 'Agatha Christie',
+ 'Hercule Poirot investigheaza o crima intr-un tren.', 1934, 256),
+
+('Hobbitul', 'J.R.R. Tolkien',
+ 'Bilbo Baggins porneste intr-o aventura neasteptata.', 1937, 310),
+
 ('1984', 'George Orwell',
  'Un roman despre supraveghere si controlul societatii.', 1949, 328),
 
@@ -181,7 +206,16 @@ JOIN (
     ('Atomic Habits', 'Dezvoltare personala'),
     ('De veghe in lanul de secara', 'Clasic'),
     ('Un veac de singuratate', 'Clasic'),
-    ('Divergent', 'Distopie')
+    ('Divergent', 'Distopie'),
+    ('Fratia inelului', 'Aventura'),
+    ('Cele doua turnuri', 'Aventura'),
+    ('Intoarcerea regelui', 'Aventura'),
+    ('Leul, vrajitoarea si dulapul', 'Aventura'),
+    ('Percy Jackson si hotul fulgerului', 'Aventura'),
+    ('Jane Eyre', 'Romance'),
+    ('La rascruce de vanturi', 'Romance'),
+    ('Anna Karenina', 'Romance'),
+    ('Marele Gatsby', 'Romance')
 ) AS asociere(titlu, gen)
     ON b.title = asociere.titlu
 JOIN genres g ON g.name = asociere.gen

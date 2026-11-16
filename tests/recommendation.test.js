@@ -79,7 +79,7 @@ test('Ordoneaza recomandarile descrescator', () => {
 
     assert.deepEqual(
         rezultate.map(carte => carte.id),
-        [3, 2, 1]
+        [3, 2]
     );
 });
 
@@ -97,4 +97,21 @@ test('Scorurile raman intre 0 si 100', () => {
             carte.score >= 0 && carte.score <= 100
         )
     );
+});
+
+test('Exclude cartile cu scor zero din recomandari', () => {
+    const carti = [
+        carte(1, [], [], 600),
+        carte(2, [1], [3], 300),
+        carte(3, [], [], 500)
+    ];
+
+    const rezultate = genereazaRecomandari(carti, preferinte);
+
+    assert.deepEqual(
+        rezultate.map(carte => carte.id),
+        [2]
+    );
+
+    assert.ok(rezultate.every(carte => carte.score > 0));
 });

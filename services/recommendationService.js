@@ -103,6 +103,7 @@ function genereazaRecomandari(carti, preferinte) {
 
     return carti
         .map(carte => calculeazaScor(carte, preferinte))
+        .filter(carte => carte.score > 0)
         .sort((a, b) =>
             b.score - a.score ||
             String(a.title).localeCompare(String(b.title), 'ro')

@@ -141,7 +141,10 @@
 
     </main>
 
-    <script>'use strict';
+    <script src="/js/recommendationExplanations.js"></script>
+
+    <script>
+    'use strict';
 
         const listaRecomandari =
             document.getElementById('lista-recomandari');
@@ -157,6 +160,10 @@
 
         const numarRezultate =
             document.getElementById('numar-rezultate');
+
+        let preferinteCurente = null;
+        let genuriDisponibile = [];
+        let temeDisponibile = [];
 
         function afiseazaEroare(text) {
             mesajIncarcare.classList.add('d-none');
@@ -238,6 +245,135 @@
                 'Vezi detalii'
             );
 
+            const explicatie = explicaRecomandare(
+                carte,
+                preferinteCurente,
+                genuriDisponibile,
+                temeDisponibile
+            );
+
+            const sectiune = creeazaElement(
+                'details',
+                'mt-3 border rounded p-3'
+            );
+
+            const sumar = creeazaElement(
+                'summary',
+                'fw-bold',
+                'De ce mi-ai recomandat această carte?'
+            );
+
+            sectiune.appendChild(sumar);
+
+            const nivel = creeazaElement(
+                'p',
+                'mt-3 fw-semibold',
+                `Nivel de compatibilitate: ${explicatie.nivel}`
+            );
+
+            sectiune.appendChild(nivel);
+
+            const criterii = [
+                {
+                    titlu: 'Genuri literare',
+                    scor: explicatie.punctaje.genres,
+                    maxim: 50,
+                    descriere: explicatie.explicatieGenuri
+                },
+                {
+                    titlu: 'Teme abordate',
+                    scor: explicatie.punctaje.themes,
+                    maxim: 30,
+                    descriere: explicatie.explicatieTeme
+                },
+                {
+                    titlu: 'Lungimea cărții',
+                    scor: explicatie.punctaje.bookLength,
+                    maxim: 20,
+                    descriere: explicatie.explicatieLungime
+                }
+            ];
+
+            criterii.forEach(criteriu => {
+                const bloc = creeazaElement('div', 'mb-3');
+
+                bloc.appendChild(
+                    creeazaElement(
+                        'div',
+                        'small fw-bold mb-1',
+                        `${criteriu.titlu}: ${criteriu.scor}/${criteriu.maxim} puncte`
+                    )
+                );
+
+                const progres = creeazaElement(
+                    'div',
+                    'progress mb-2'
+                );
+
+                const bara = creeazaElement(
+                    'div',
+                    'progress-bar'
+                );
+
+                bara.setAttribute('role', 'progressbar');
+
+                bara.style.width =
+                    `${(criteriu.scor / criteriu.maxim) * 100}%`;
+
+                bara.style.backgroundColor = '#69439b';
+
+                bara.setAttribute(
+                    'aria-label',
+                    `Punctaj ${criteriu.titlu}`
+                );
+
+                bara.setAttribute(
+                    'aria-valuenow',
+                    String(criteriu.scor)
+                );
+
+                bara.setAttribute('aria-valuemin', '0');
+                bara.setAttribute(
+                    'aria-valuemax',
+                    String(criteriu.maxim)
+                );
+
+                progres.appendChild(bara);
+                bloc.appendChild(progres);
+
+                bloc.appendChild(
+                    creeazaElement(
+                        'p',
+                        'small text-muted',
+                        criteriu.descriere
+                    )
+                );
+
+                sectiune.appendChild(bloc);
+            });
+
+            if (explicatie.lipsaGenuri.length) {
+                sectiune.appendChild(
+                    creeazaElement(
+                        'p',
+                        'small',
+                        'Genuri fără potrivire: ' +
+                        explicatie.lipsaGenuri.join(', ')
+                    )
+                );
+            }
+
+            if (explicatie.lipsaTeme.length) {
+                sectiune.appendChild(
+                    creeazaElement(
+                        'p',
+                        'small',
+                        'Teme fără potrivire: ' +
+                        explicatie.lipsaTeme.join(', ')
+                    )
+                );
+            }
+
             detalii.href =
                 `/book.html?id=${encodeURIComponent(carte.id)}`;
 
@@ -246,6 +382,7 @@
             continut.appendChild(autor);
             continut.appendChild(pagini);
             continut.appendChild(detalii);
+            continut.appendChild(sectiune);
 
             card.appendChild(continut);
             coloana.appendChild(card);
@@ -280,6 +417,33 @@
                 return;
             }
 
+            preferinteCurente = preferinte;
+
+            try {
+                const [raspunsGenuri, raspunsTeme] = await Promise.all([
+                    fetch('/api/genres'),
+                    fetch('/api/themes')
+                ]);
+
+                if (!raspunsGenuri.ok || !raspunsTeme.ok) {
+                    throw new Error('Nu s-au putut încărca denumirile criteriilor.');
+                }
+
+                genuriDisponibile = await raspunsGenuri.json();
+                temeDisponibile = await raspunsTeme.json();
+            } catch (eroare) {
+                console.warn(eroare.message);
+                const avertizare = creeazaElement(
+                    'div',
+                    'alert alert-warning mb-4',
+                    'Recomandările au fost calculate, dar unele denumiri ' +
+                    'ale genurilor și temelor nu au putut fi încărcate. ' +
+                    'Explicațiile pot fi incomplete.'
+                );
+
+                listaRecomandari.before(avertizare);
+            }
+
             try {
                 const raspuns = await fetch(
                     '/api/recommendations',
@@ -312,7 +476,7 @@
                 informatiiRezultate.classList.remove('d-none');
 
                 numarRezultate.textContent =
-                    `${date.length} cărți analizate, ` +
+                    `${date.length} cărți recomandate, ` +
                     'ordonate după compatibilitate.';
 
                 listaRecomandari.replaceChildren();
@@ -322,9 +486,10 @@
                         creeazaElement(
                             'p',
                             'text-muted',
-                            'Nu există cărți disponibile.'
+                            'Nu am găsit cărți care să corespundă preferințelor tale. ' +
+                            'Încearcă să modifici preferințele.'
                         )
-                    );
+                    );git branch--show - current
                     return;
                 }
 

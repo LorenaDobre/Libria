@@ -1,0 +1,6 @@
+﻿import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
+import { BookCover } from './book-cover';
+import type { Book } from '../data/books';
+export function BookDetails({ book, onClose }: { book: Book | null; onClose: () => void }) {
+    return <Dialog open={book !== null} onOpenChange={open => { if (!open) onClose(); }}><DialogContent className="book-dialog rounded-2xl max-w-2xl max-h-[90dvh] overflow-y-auto">{book && <><div className="dialog-layout"><div className="dialog-cover"><BookCover book={book} /></div><div><span className="genre-tag">{book.genre}</span><DialogTitle className="dialog-title">{book.title}</DialogTitle><p className="dialog-author">{book.author}</p><dl className="book-facts"><div><dt>Prima publicare</dt><dd>{book.year}</dd></div><div><dt>Pagini, orientativ</dt><dd>{book.pages}</dd></div></dl><DialogDescription className="dialog-summary">{book.description}</DialogDescription></div></div><div className="dialog-notice">Copertă ilustrativă creată pentru Libria. Numărul de pagini poate varia în funcție de ediție.</div><button className="primary-button dialog-done" onClick={onClose}>Înapoi la descoperiri</button></>}</DialogContent></Dialog>;
+}

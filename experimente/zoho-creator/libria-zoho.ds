@@ -1,0 +1,632 @@
+﻿/*
+ * Author       : dobre.lorena.s3h_student
+ * Generated on : 19-Nov-2026 15:48:47
+ * Version      : 1.0
+ */
+ application "Libria Book Catalog System"
+ {
+ 	date format = "dd-MMM-yyyy"
+ 	time zone = "America/Los_Angeles"
+ 	time format = "24-hr"
+
+ 	forms
+	{
+		form carti
+		{
+			displayname = "Carti"
+			success message = "Date adăugate cu succes!"
+			Section
+			(
+				type = section
+	 			row = 1
+	 			column = 0   
+				width = medium
+			)
+			titlu
+			(
+    			type = text
+				displayname = "Titlu"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			autor
+			(
+    			type = text
+				displayname = "Autor"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			gen_literar
+			(
+				type = picklist
+				displayname = "Gen Literar"
+				values = {"Fantasy","Mister","Romance","Roman","Science Fiction"}
+				others option = true
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			numar_pagini
+			(
+				type = number
+				displayname = "Numar de Pagini"
+				maxchar = 19
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			descriere
+			(
+    			type = textarea
+				displayname = "Descriere"
+				height = 100px
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			cod_intern
+			(
+    			type = text
+				displayname = "Cod Intern"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			data_inregistrare
+			(
+    			type = date
+				displayname = "Data Inregistrare"
+				alloweddays = 0,1,2,3,4,5,6
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			status
+			(
+				type = radiobuttons
+				displayname = "Status"
+				values = {"Inactiv","Activ"}
+				others option = true
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			editat_ultima_data
+			(
+    			type = datetime
+				displayname = "Editat Ultima Data"
+				timedisplayoptions = "hh:mm:ss"
+				alloweddays = 0,1,2,3,4,5,6
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			citat
+			(
+				type = number
+				displayname = "Numar Citari"
+				maxchar = 19
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			isbn
+			(
+    			type = text
+				displayname = "ISBN"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+			editura
+			(
+    			type = text
+				displayname = "Editura"
+	 			row = 1
+	 			column = 1   
+				width = medium
+			)
+	
+			actions
+			{
+				on add
+				{
+					submit
+					(
+   						type = submit
+   						displayname = "Trimite"
+					)
+					reset
+					(
+   						type = reset
+   						displayname = "Resetează"
+					)
+				}
+				on edit
+				{
+					update
+					(
+   						type = submit
+   						displayname = "Actualizează"
+					)
+					cancel
+					(
+   						type = cancel
+   						displayname = "Anulează"
+					)
+				}
+			}
+		}
+	}
+	reports
+	{
+		list carti_Report
+		{
+			displayName = "Raport Cărți"
+			show all rows from carti    
+			(
+				titlu as "Titlu"
+				autor as "Autor"
+				gen_literar as "Gen Literar"
+				numar_pagini as "Numar de Pagini"
+				descriere as "Descriere"
+				cod_intern as "Cod Intern"
+				data_inregistrare as "Data Inregistrare"
+				status as "Status"
+				editat_ultima_data as "Editat Ultima Data"
+				citat as "Numar Citari"
+				isbn as "ISBN"
+				editura as "Editura"
+			)
+
+			conditional formatting
+			(
+				"New Formatting1"
+				{
+				condition = (gen_literar == "Fantasy")
+				fields = [gen_literar]
+				format = "color:#ffffff;background-color:#765f89;"
+				}
+				"New Formatting2"
+				{
+				condition = (gen_literar == "Mister")
+				fields = [gen_literar]
+				format = "color:#000000;background-color:#1bbc9b;"
+				}
+				"New Formatting3"
+				{
+				condition = (gen_literar == "Roman")
+				fields = [gen_literar]
+				format = "color:#ffffff;background-color:#e84c3d;"
+				}
+			)
+		}
+		kanban carti_by_gen_literar
+		{
+			displayName = "Tablă"
+			show all rows from carti    
+			(
+				titlu as "Titlu"
+				autor as "Autor"
+				gen_literar as "Gen Literar"
+				numar_pagini as "Numar de Pagini"
+				descriere as "Descriere"
+				cod_intern as "Cod Intern"
+				data_inregistrare as "Data Inregistrare"
+				status as "Status"
+				editat_ultima_data as "Editat Ultima Data"
+				citat as "Numar Citari"
+				isbn as "ISBN"
+				editura as "Editura"
+			)
+
+			options
+			(
+	 			display field = gen_literar
+	 		)
+		}
+	}
+	pages
+	{
+		page DashBoard
+		{
+			displayname = "Panou de Control"
+			Content="<zml    \t\t\n\t\t\n\t\t\n\t\t\n\t\t\n>\n\t<layout>\n\t<row>\n\t<column\n   \t\t width='100%'\n   \t>\n\t<search \n\telementName='Search'\n\tpaddingTop = '0px'\n\tpaddingLeft = '0px'\n\tpaddingRight = '0px'\n\tpaddingBottom = '0px'\n\tbgtype = 'none'\n\tbgColor = 'transparent'\n\n\tshape = 'flat'\n\tresultComponent = 'report'\n\tlinkName = 'carti_Report'\n\ttarget = 'new-window'\n\tcriteriaString = 'titlu.contains(input.searchString)'\n\tfontFamily = 'default'\n\tappLinkName = 'thisapp'\n\tstyle = '4'\n\tplaceholder = 'Introduce\u021Bi Titlul'\n\n>\n<searchbar color=\"#000000\" bgColor=\"#ffffff\" fontSize=\"15px\"\n/><searchbutton color=\"#ffffff\" bgColor=\"#09ab03\" \nfontSize=\"15px\"  /></search>\n</column>\n</row><row>\n\t<column\n   \t\t width='32%'\n   \t>\n\t<panel elementName='Welcome_Panel 1'\n \n >\n\t<pr \n\t\t\twidth='fill'\n\t\theight='fill'\n>\n\t<pc \n\t\tpaddingTop = '17px'\n\tpaddingLeft = '17px'\n\tpaddingRight = '0px'\n\tpaddingBottom = '17px'\n\tbgColor = '#FFFFFF'\n\n\t\twidth = '100%'\n\t\thAlign = 'left'\n\t\tvAlign = 'middle'\n>\n\t<pr \n\t\t\twidth='auto'\n\t\theight='auto'\n>\n\t<pc \n\t\n>\n\t<image  \n\t\tmarginBottom = '0px'\n\tmarginTop = '0px'\n\n\tcolor = '#FF596F'\n\tbgColor = 'rgba(0, 0, 0, 0)'\n\twidth = '40px'\n\theight = '40px'\n\ttype = 'icon'\n\tvalue = 'emoticons-smile'\n\tsize = '22px'\n\tcornerRadius = '10px'\n\ticonType = 'outline'\n/>\n</pc><pc \n\t\tpadding = '5px'\n\n>\n\t<pr \n\t>\n\t<pc \n\t\n>\n\t<text \n\n\tmarginLeft = '10px'\n\tmarginRight = '0px' \n\tmarginBottom = '10px'\n\tcolor = '#000000'\n\tsize = '16px'\n\ttype = 'Text'\n\n\tbgColor = 'rgba(0, 0, 0, 0)'\n\n\n\n\n\n\n\t  value = 'Bine a\u021Bi venit'\n>\n</text>\n\n</pc>\n</pr><pr \n\t>\n\t<pc \n\t\n>\n\t<text \n\n\tmarginLeft = '10px'\n\tmarginBottom = '0px'\n\tmarginTop = '0px'\n\tcolor = '#1F58B8'\n\tsize = '20px'\n\tbold = 'true' \n\ttype = 'Text'\n\n\tbgColor = 'rgba(0, 0, 0, 0)'\n\n\n\n\n\n\n\t  value = '${zoho.loginuserid}'\n>\n</text>\n\n</pc>\n</pr>\n</pc>\n</pr>\n</pc>\n</pr>\n</panel>\n</column><column\n   \t\t width='35%'\n   \t>\n\t<panel elementName='Default_Panel 1'\n \n >\n\t<pr \n\t\t\twidth='fill'\n\t\theight='fill'\n>\n\t<pc \n\t\tpadding = '0px'\n\tbgColor = '#FAE8FF'\n\n\t\twidth = '100%'\n\t\thAlign = 'center'\n\t\tvAlign = 'middle'\n>\n\t<pr \n\t\t\twidth='fill'\n\t\theight='fill'\n>\n\t<pc \n\t\tpadding = '20px'\n\tbgColor = '#1F58B8'\n\n\t\twidth = '77%'\n\t\thAlign = 'left'\n\t\tvAlign = 'middle'\n>\n\t<pr \n\t\t\twidth='auto'\n\t\theight='auto'\n>\n\t<pc \n\t\n>\n\t<text \n\n\tcolor = '#FFFFFF'\n\tsize = '20px'\n\ttype = 'Text'\n\n\tbgColor = 'rgba(0, 0, 0, 0)'\n\n\n\n\n\n\n\t  value = 'Total C\u0103r\u021Bi'\n>\n</text>\n\n</pc>\n</pr>\n</pc><pc \n\t\tpaddingTop = '20px'\n\tpaddingLeft = '0px'\n\tpaddingRight = '20px'\n\tpaddingBottom = '20px'\n\tbgColor = '#1F58B8'\n\n\t\twidth = '23%'\n\t\thAlign = 'right'\n\t\tvAlign = 'middle'\n>\n\t<pr \n\t\t\twidth='auto'\n\t\theight='auto'\n>\n\t<pc \n\t\n>\n\t<image  \n\t\n\tcolor = '#FFFFFF'\n\tbgColor = 'rgba(0, 0, 0, 0)'\n\twidth = '40px'\n\theight = '40px'\n\ttype = 'icon'\n\tvalue = 'education-books-46'\n\tsize = '22px'\n\tcornerRadius = '20px'\n\ticonType = 'outline'\n/>\n</pc><pc \n\t\n>\n\t<text \n\n\tcolor = '#FFFFFF'\n\tsize = '20px'\n\tbold = 'true' \n\ttype = 'Form Data'\n\n\tbgColor = 'rgba(0, 0, 0, 0)'\n\n\n\tdisplayType = 'actual'\n\tthousandsSeperator = 'LOCALE'\n\tdecimalSeperator = 'DOT'\n\tnumberScale = 'none'\n\n\n\n\n\t  value = 'thisapp.carti.ID.count'\n>\n</text>\n\n</pc>\n</pr>\n</pc>\n</pr>\n</pc>\n</pr>\n</panel>\n</column><column\n   \t\t width='33%'\n   \t>\n\t<panel elementName='Panel_Button 1'\n \n >\n\t<pr \n\t\t\twidth='fill'\n\t\theight='fill'\n>\n\t<pc \n\t\tpadding = '0px'\n\tbgColor = '#EAE3FF'\n\n\t\twidth = '100%'\n\t\thAlign = 'center'\n\t\tvAlign = 'middle'\n>\n\t<pr \n\t\t\twidth='fill'\n\t\theight='fill'\n>\n\t<pc \n\t\tpaddingTop = '20px'\n\tpaddingLeft = '20px'\n\tpaddingRight = '0px'\n\tpaddingBottom = '20px'\n\tbgColor = '#FF596F'\n\n\t\twidth = '60%'\n\t\thAlign = 'left'\n\t\tvAlign = 'middle'\n>\n\t<pr \n\t\t\twidth='auto'\n\t\theight='auto'\n>\n\t<pc \n\t\n>\n\t<text \n\n\tmarginRight = '10px' \n\tcolor = '#FFFFFF'\n\tsize = '20px'\n\tbold = 'true' \n\ttype = 'Text'\n\n\tbgColor = 'rgba(0, 0, 0, 0)'\n\n\n\n\n\n\n\t  value = 'Link-uri Rapide:'\n>\n</text>\n\n</pc>\n</pr>\n</pc><pc \n\t\tpaddingTop = '20px'\n\tpaddingLeft = '0px'\n\tpaddingRight = '50px'\n\tpaddingBottom = '20px'\n\tbgColor = '#FF596F'\n\n\t\twidth = '40%'\n\t\thAlign = 'right'\n\t\tvAlign = 'middle'\n>\n\t<pr \n\t\t\twidth='auto'\n\t\theight='auto'\n>\n\t<pc \n\t\n\t\tvAlign = 'middle'\n>\n\t<button \n\t\tmarginLeft = '0px'\n\tmarginRight = '0px' \n\tmarginBottom = '0px'\n\tmarginTop = '0px'\n\n    action = 'OpenForm'\n\t\tcomponentLinkName = 'carti'\n\t\ttarget = 'new-window'\n\tcolor = '#000000'\n\tsize = '12px'\n\ttext ='Adaug\u0103 C\u0103r\u021Bi Noi'\n\t\ttype = 'flat'\n\t\tbgColor = '#FFFFFF'\n\t\tcornerRadius = '3px' \n/>\n</pc>\n</pr>\n</pc>\n</pr>\n</pc>\n</pr>\n</panel>\n</column>\n</row><row>\n\t<column\n   \t\t width='100%'\n   \t>\n\t<chart \n\telementName='Chart 1'\n\n\t\n\ttitle = 'Num\u0103r de Pagini dup\u0103 Num\u0103r de Cit\u0103ri'\n\t\n\ttype = 'Scatter'\n\txtitle = 'Numar de Pagini'\n\tytitle = 'Num\u0103r de Cit\u0103ri'\n\tbgColor = 'rgb(255, 255, 255)'\n\ttheme = 'theme1'\n\tlegendPos = 'none'\n\theightType = 'auto'\n\theightValue = '300px'\n\tappLinkName = 'thisapp'\n\tformLinkName = 'carti'\n\txfield = 'numar_pagini'\n\tyfields = 'value:citat'\n\tgroupBy = 'titlu'\n\t\tDelugeCriteria = 'numar_pagini is not null'\n/>\n\n</column>\n</row><row>\n\t<column\n   \t\t width='100%'\n   \t>\n\t<report \n\telementName='Report'\n\n\t\tappLinkName = 'thisapp'\n\t\tlinkName = 'carti_Report'\n\t\n\t\tiszreport = 'false'\n\t\t\t\t\tzc_AddRec = 'false'\n\t\t\t\t\tzc_EditRec = 'false'\n\t\t\t\t\tzc_Print = 'false'\n\t\t\t\t\tzc_Export = 'false'\n\t\t\t\t\tzc_DelRec = 'false'\n\t\t\t\t\tzc_DuplRec = 'false'\n\t\t\t\t\tzc_Search = 'false'\n\t\t\t\t\tzc_EditBulkRec = 'false'\n\t\t\t\t\tzc_BulkDelete = 'false'\n\t\t\t\t\tzc_BulkDuplicate = 'false'\n\theightType = 'auto'\n\theightValue = '700'\n/>\n</column>\n</row>\n</layout>\n</zml>"
+		}
+	}
+
+
+
+
+	share_settings
+	{
+			"Read"
+			{
+				name = "Read"
+				type = Users_Permissions
+				permissions = {Chat:true, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "This profile will have read permission for all components\n"
+			}
+			"Write"
+			{
+				name = "Write"
+				type = Users_Permissions
+				permissions = {Chat:true, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "This profile will have write permission for all components\n"
+			}
+			"Developer"
+			{
+				name = "Developer"
+				type = Developer
+				permissions = {Chat:false, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "Developer Profile\n"
+			}
+			"Administrator"
+			{
+				name = "Administrator"
+				type = Users_Permissions
+				permissions = {Chat:true, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "This profile will have all the permissions.\n"
+			}
+			"Customer"
+			{
+				name = "Customer"
+				type = Customer_Portal
+				permissions = {Chat:true, Predefined:true, ApiAccess:true, PIIAccess:true, ePHIAccess:true}
+				description = "This is the default profile having only add and view permission.\n"
+			}
+			roles
+			{
+				"CEO"
+				{
+					description = "User belonging to this role can access data of all other users."
+				}
+			}
+	}
+
+
+	web
+	{
+		forms
+		{
+			form carti
+			{
+				label placement = left
+			}
+		}
+		reports
+		{
+			report carti_Report
+			{
+				quickview
+				(
+					layout
+					(
+						datablock1
+						(
+							fields
+							(
+								titlu as "Titlu"
+								autor as "Autor"
+								gen_literar as "Gen Literar"
+								numar_pagini as "Numar de Pagini"
+								descriere as "Descriere"
+								cod_intern as "Cod Intern"
+								data_inregistrare as "Data Inregistrare"
+								status as "Status"
+								editat_ultima_data as "Editat Ultima Data"
+								citat as "Numar Citari"
+								isbn as "ISBN"
+								editura as "Editura"
+							)
+						)
+					)
+						menu
+						(
+							header
+							(
+								Edit  as "Editează" 
+								Duplicate  as "Duplică" 
+								Delete  as "Șterge" 
+								Print  as "Imprimă" 
+								Add 
+								Import 
+								Export 
+							)
+						record
+						(
+							Edit  as "Editează" 
+							Duplicate  as "Duplică" 
+							Delete  as "Șterge" 
+							Print  as "Imprimă" 
+    					)
+						)
+    				action
+    				(
+						on click
+						(
+							View Record  as "Vezi Înregistrare" 
+    					)
+						on right click
+						(
+							Edit  as "Editează" 
+							Duplicate  as "Duplică" 
+							Delete  as "Șterge" 
+							Print  as "Imprimă" 
+							View Record  as "Vezi Înregistrare" 
+    					)
+     				)
+				)
+
+				detailview
+				(
+					layout
+					(
+						datablock1
+						(
+		     				title = "Prezentare Generală"
+							fields
+							(
+								titlu as "Titlu"
+								autor as "Autor"
+								gen_literar as "Gen Literar"
+								numar_pagini as "Numar de Pagini"
+								descriere as "Descriere"
+								cod_intern as "Cod Intern"
+								data_inregistrare as "Data Inregistrare"
+								status as "Status"
+								editat_ultima_data as "Editat Ultima Data"
+								citat as "Numar Citari"
+								isbn as "ISBN"
+								editura as "Editura"
+							)
+						)
+					)
+						menu
+						(
+							header
+							(
+								Edit  as "Editează" 
+								Duplicate  as "Duplică" 
+								Delete  as "Șterge" 
+								Print  as "Imprimă" 
+							)
+						)
+				)
+			}
+			report carti_by_gen_literar
+			{
+				quickview
+				(
+					layout
+					(
+		 				type = 1
+						datablock1
+						(
+							layout type = 1
+							fields
+							(
+								titlu as "Titlu"
+								autor as "Autor"
+							)
+						)
+					)
+						menu
+						(
+							header
+							(
+								Edit  as "Editează" 
+								Duplicate  as "Duplică" 
+								Delete  as "Șterge" 
+								Print  as "Imprimă" 
+								Add 
+								Import 
+								Export 
+							)
+						record
+						(
+							Edit  as "Editează" 
+							Duplicate  as "Duplică" 
+							Delete  as "Șterge" 
+							Print  as "Imprimă" 
+    					)
+						)
+    				action
+    				(
+						on click
+						(
+							View Record  as "Vezi Înregistrare" 
+    					)
+						on right click
+						(
+							Edit  as "Editează" 
+							Duplicate  as "Duplică" 
+							Delete  as "Șterge" 
+							Print  as "Imprimă" 
+							View Record  as "Vezi Înregistrare" 
+    					)
+     				)
+				)
+
+				detailview
+				(
+					layout
+					(
+						datablock1
+						(
+							fields
+							(
+								titlu as "Titlu"
+								autor as "Autor"
+								gen_literar as "Gen Literar"
+								numar_pagini as "Numar de Pagini"
+								descriere as "Descriere"
+								cod_intern as "Cod Intern"
+								data_inregistrare as "Data Inregistrare"
+								status as "Status"
+								editat_ultima_data as "Editat Ultima Data"
+								citat as "Numar Citari"
+								isbn as "ISBN"
+								editura as "Editura"
+							)
+						)
+					)
+						menu
+						(
+							header
+							(
+								Edit  as "Editează" 
+								Duplicate  as "Duplică" 
+								Delete  as "Șterge" 
+								Print  as "Imprimă" 
+							)
+						)
+				)
+			}
+		}
+		menu
+		{
+			space Space
+			{
+				displayname = "Space"
+				icon = "objects-spaceship"
+
+				section Section_1
+				{
+					displayname = "Panou de Control"
+					icon = "ui-1-dashboard-half"
+					page DashBoard
+					{
+						icon = "ui-1-dashboard-half"
+					}
+				}
+				section Section_2
+				{
+					displayname = "Cărți"
+					icon = "education-books-46"
+					form  carti
+					{
+						icon = "ui-1-bold-add"
+					}
+					report carti_Report
+					{
+						icon = "education-books-46"
+					}
+				}
+				section Section_3
+				{
+					displayname = "Tablă"
+					icon = "business-pin"
+					report carti_by_gen_literar
+					{
+						icon = "business-pin"
+					}
+				}
+				section ZC_App_Preferences
+				{
+					displayname = "App Preferences"
+					icon = "design-app"
+					systemcomponent
+					{
+						type = localization
+						displayname = "Language Selection"
+						icon = "education-language"
+					}
+					systemcomponent
+					{
+						type = connection
+						displayname = "Integrations"
+						icon = "tech-2-connection"
+					}
+				}
+				section ZC_Approvals
+				{
+					displayname = "Approvals"
+					icon = "ui-2-hourglass"
+					systemcomponent
+					{
+						type = approval
+						approval status = pending
+						displayname = "Pending Tasks"
+						icon = "ui-2-hourglass"
+					}
+					systemcomponent
+					{
+						type = approval
+						approval status = completed
+						displayname = "Completed Tasks"
+						icon = "design-todo"
+					}
+				}
+				section SharedAnalytics_Section
+				{
+					type = shared_user_report_section
+					displayname = "Reports"
+					icon = "business-chart-bar-33"
+				}
+			}
+			preference
+			{
+				icon
+				{
+					style = solid
+					show = {space,section,component}
+				}
+			}
+		}
+		customize
+		{
+			new theme = 6
+			font = "rubik"
+			color options
+			{
+				color = "3"
+			}
+			logo
+			{
+				preference = "none"
+				placement = "left"
+			}
+		}
+	}
+	phone
+	{
+		customize
+		{
+			layout = twocolumn
+			font = "default"
+			style = "3"
+			color options
+			{
+				color = chryslerpurple
+			}
+			logo
+			{
+				preference = "none"
+			}
+		}
+	}
+	tablet
+	{
+		customize
+		{
+			layout = slidingpane
+			font = "default"
+			style = "3"
+			color options
+			{
+				color = red
+			}
+			logo
+			{
+				preference = "none"
+			}
+		}
+	}
+	translation
+{
+{"Language_Settings":{"LANGAGUE_WITH_LOGIN":"browser"}}
+}
+}

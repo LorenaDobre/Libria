@@ -57,3 +57,10 @@ Exportul aplicației, datele demonstrative și capturile de ecran sunt disponibi
 `experimente/zoho-creator/`
 
 Aceste experimente au rol demonstrativ și nu condiționează funcționarea aplicației principale.
+
+### Managementul proiectului – Jira
+
+Planificarea și urmărirea activităților de dezvoltare sunt realizate în Jira. Sarcinile includ funcționalitățile F1–F6, configurarea mediului de dezvoltare, proiectarea bazei de date, testarea automată și experimentele cu instrumentele complementare.
+
+[Jira – Managementul proiectului Libria](https://proiect-club-de-arta.atlassian.net/jira/software/projects/LIB/boards/34)
+
